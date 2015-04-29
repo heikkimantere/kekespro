@@ -2,10 +2,6 @@ var basket = {
   items: []
 }
 
-var productCatalog = {
-  items: []
-}
-
 $(document).keyup(function(e) {
   var esc = 27
   if (e.keyCode == esc) {
@@ -73,7 +69,7 @@ $(window).load(function() {
     var regex = new RegExp(searchTerm, "i")
     var productCount = 0
     var result = $('#productResultTemplate')
-    var resultsList =  $('#results ul')
+    var resultsList =  $('#results .list')
     resultsList.html('')
     $.each(data, function(key, val) {
       if ((val.nimike.search(regex) != -1) || (val.kuvaus.search(regex) != -1) || (val.hakusanat.search(regex) != -1)) {
