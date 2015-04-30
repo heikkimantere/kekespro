@@ -209,12 +209,11 @@ $(window).load(function() {
       var basketItemEan = basketItem.ean
 
       for (i=0; i < products.length; i++) {
-        var item = productList.find('.productresult:eq('+i+')')
-        var ean = item.attr('id')
-        if (ean == basketItemEan) {
-          item.addClass('inBasket')
-          item.find('.selected').html(basketItem.kpl)
-          break
+        var item = products[i]
+        if (item.id == basketItemEan) {
+          item.classList.add('inBasket')
+          item.querySelector(".selected").innerHTML = basketItem.kpl
+          break;
         }
       }
     }
@@ -343,5 +342,3 @@ $(window).load(function() {
   })
 
 })
-
-
