@@ -223,11 +223,11 @@ $(window).load(function() {
       var basketItemEan = basketItem.ean
 
       for (i=0; i < products.length; i++) {
-        var item = productList.find('.productresult:eq('+i+')')
-        var ean = item.attr('id')
+        var item = products[i]
+        var ean = item.id
         if (ean == basketItemEan) {
-          item.addClass('inBasket')
-          item.find('.selected').html(basketItem.kpl)
+          item.classList.add('inBasket')
+          item.querySelector('.selected').innerHTML = basketItem.kpl
           break
         }
       }
@@ -239,15 +239,15 @@ $(window).load(function() {
     removeFromBasket(ean)
   })
 
-  function unmarkItem(ean) { 
+  function unmarkItem(basketEan) {
     var productList = $('#results')
     var products = productList.find('.productresult')
     for (i = 0; i < products.length; i++) {
-      var product = productList.find('.productresult:eq(' + i + ')')
-      var productEan = product.attr('id')
-      if (ean == productEan) {
-        product.removeClass('inBasket')
-        product.find('.selected').html('')
+      var item = products[i]
+      var ean = item.id
+      if (basketEan == ean) {
+        item.classList.remove('inBasket')
+        item.querySelector('.selected').innerHTML = ''
         break
       }
     }

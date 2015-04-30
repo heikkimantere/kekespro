@@ -1,6 +1,8 @@
 $bg: #eee9e5;
 $hover: #D5C8BD;
 $text: #444;
+$lightGrey: #e7e7e7;
+$blue: #3190EB;
 
 *, *:before, *:after {
   -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
@@ -14,7 +16,7 @@ body {
 
 }
 a {
-  color: #3190ED;
+  color: $blue;
   text-decoration: none;
   font-weight: 400;
   &:hover {
@@ -46,16 +48,17 @@ span.icon_clear:hover {
 }
 header {
   position: fixed;
+  height: 100px;
   top: 0;
   left: 0;
-  background-color: white;
+  background-color: #383838;
   z-index: 1;
   width: 100%;
   opacity: 0.95;
-  background-color: #f9f9f9;
-  border-bottom: 1px solid #eee;
-  input {
-    width: 20px;
+  .searchTools {
+    position: absolute;
+    top: 25px;
+    display: inline-block;
   }
   label {
     display: inline;
@@ -75,6 +78,7 @@ h1, h2 {
 h1 {
   padding: 30px;
   display: none;
+  color: white;
 }
 h2 {
   padding: 30px 0px 30px 0px;
@@ -92,9 +96,6 @@ label {
   margin-top: 5px;
   display: block;
   font-weight: 300;
-}
-input {
-  width: 200px;
 }
 input[type="text"], textarea {
   display: inline-block;
@@ -117,6 +118,53 @@ input[type="text"], textarea {
     display: inline-block;
   }
 }
+
+/* Base for label styling */
+[type="checkbox"] {
+  position: absolute;
+  left: -9999px;
+}
+[type="checkbox"] + label {
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  color: white;
+}
+/* checkbox aspect */
+[type="checkbox"] + label:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: 25px;
+  height: 25px;
+  background: white;
+  border-radius: 1px;
+}
+/* checked mark aspect */
+[type="checkbox"] + label:after {
+  content: '\2713';
+  position: absolute;
+  top: -13px;
+  left: 4px;
+  font-size: 32px;
+  color: $blue;
+  transition: all .1s;
+}
+/* checked mark aspect changes */
+[type="checkbox"]:not(:checked) + label:after {
+  opacity: 0;
+  transform: scale(0);
+}
+[type="checkbox"]:checked + label:after {
+  opacity: 1;
+  transform: scale(1);
+}
+/* hover style just for information */
+label:hover {
+  text-decoration: underline;
+}
+
 
 #showOnlyBasketContents {
   padding: 10px;
@@ -183,7 +231,7 @@ input[type="button"] {
   margin-bottom: .5em; 
 }
 .rightColumn {
-  background: $bg;
+  background: $lightGrey;
   clear: both;
   z-index: 10;
 }
@@ -360,7 +408,6 @@ input[type="button"] {
     bottom: 0;
     right: 0; 
     width: 17em; 
-    background: $bg;
     padding-left: 1em;
   }	
   #results {
@@ -407,12 +454,6 @@ input[type="button"] {
   .rightColumn { 
     width: 20em;
     padding-left: 1.5em;
-  }
-  .rightColumn {
-    background: $bg;
-  }
-  input {
-    width: 230px;
   }
 }
 @media all and (min-width: 60em) {
