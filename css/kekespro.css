@@ -253,14 +253,13 @@ input[type="button"] {
     /* line 238, kekespro.scss */
     #results .productresult .li-head {
       margin: 0px 0px 10px 0px;
-      text-transform: capitalize;
       font-weight: 400;
       min-height: 2.4em; }
-    /* line 244, kekespro.scss */
+    /* line 243, kekespro.scss */
     #results .productresult .li-sub {
       margin: 0; }
 
-/* line 250, kekespro.scss */
+/* line 249, kekespro.scss */
 #ostoskoripainike {
   display: block;
   position: fixed;
@@ -271,51 +270,51 @@ input[type="button"] {
   background-color: white;
   text-transform: uppercase; }
 
-/* line 260, kekespro.scss */
+/* line 259, kekespro.scss */
 .urlToBasket {
   float: left;
   margin: 10px 0; }
 
-/* line 264, kekespro.scss */
+/* line 263, kekespro.scss */
 .emptyBasket {
   float: right;
   margin: 10px;
   display: none; }
 
-/* line 269, kekespro.scss */
+/* line 268, kekespro.scss */
 #basketcontents {
   clear: both;
   line-height: 1.35em;
   font-weight: 300; }
-  /* line 273, kekespro.scss */
+  /* line 272, kekespro.scss */
   #basketcontents b {
     display: block; }
-  /* line 276, kekespro.scss */
+  /* line 275, kekespro.scss */
   #basketcontents .itemRow {
     padding: 5px 0; }
-    /* line 278, kekespro.scss */
+    /* line 277, kekespro.scss */
     #basketcontents .itemRow .reduce {
       cursor: pointer;
       float: right;
       padding: 4px 7px;
       margin-right: 3px;
       border-radius: 15px; }
-      /* line 284, kekespro.scss */
+      /* line 283, kekespro.scss */
       #basketcontents .itemRow .reduce:hover {
         background: #ccc; }
-    /* line 288, kekespro.scss */
+    /* line 287, kekespro.scss */
     #basketcontents .itemRow .amount {
       display: block;
       font-weight: 600; }
-    /* line 292, kekespro.scss */
+    /* line 291, kekespro.scss */
     #basketcontents .itemRow .productName {
       display: block;
       padding: 3px 0; }
-    /* line 296, kekespro.scss */
+    /* line 295, kekespro.scss */
     #basketcontents .itemRow .description {
       display: block;
       font-size: 14px; }
-  /* line 301, kekespro.scss */
+  /* line 300, kekespro.scss */
   #basketcontents .totalPrice {
     font-weight: 600;
     margin: 10px 10px 10px 0;
@@ -323,29 +322,29 @@ input[type="button"] {
     padding: 5px 0;
     border-top: 1px solid black; }
 
-/* line 310, kekespro.scss */
+/* line 309, kekespro.scss */
 #productResultTemplate, #basketItemTemplate {
   display: none; }
 
-/* line 314, kekespro.scss */
+/* line 313, kekespro.scss */
 .h1end {
   display: none; }
 
 @media all and (min-width: 35em) {
-  /* line 321, kekespro.scss */
+  /* line 320, kekespro.scss */
   body {
     color: #444;
     font-weight: 200; }
 
-  /* line 325, kekespro.scss */
+  /* line 324, kekespro.scss */
   h1 {
     display: none; }
 
-  /* line 328, kekespro.scss */
+  /* line 327, kekespro.scss */
   header, .leftColumn {
     margin-right: 16em; }
 
-  /* line 331, kekespro.scss */
+  /* line 330, kekespro.scss */
   .rightColumn {
     position: fixed;
     width: 150px;
@@ -357,86 +356,82 @@ input[type="button"] {
     background: #eee9e5;
     padding-left: 1em; }
 
-  /* line 342, kekespro.scss */
-  .list {
+  /* line 341, kekespro.scss */
+  #results {
     display: flex;
     width: 100%;
     flex-wrap: wrap;
     padding: 0.5em;
     margin: 0 auto;
     overflow: hidden; }
-    /* line 349, kekespro.scss */
-    .list .productresult {
-      padding: 0.5em;
+    /* line 348, kekespro.scss */
+    #results .productresult {
+      padding: 1em;
       display: block;
       width: 50%;
       float: left;
       background: none;
       border: 0; }
-      /* line 356, kekespro.scss */
-      .list .productresult .li-head {
+      /* line 355, kekespro.scss */
+      #results .productresult .li-head {
         min-height: initial; }
-      /* line 359, kekespro.scss */
-      .list .productresult .li-img, .list .productresult .li-text {
+      /* line 358, kekespro.scss */
+      #results .productresult .li-img, #results .productresult .li-text {
         display: block;
         width: auto;
         padding: 0; }
 
-  /* line 366, kekespro.scss */
+  /* line 365, kekespro.scss */
   #ostoskoripainike {
     display: none; }
 
-  /* line 369, kekespro.scss */
+  /* line 368, kekespro.scss */
   .h1end {
     display: block; } }
 @media all and (min-width: 50em) {
-  /* line 374, kekespro.scss */
+  /* line 373, kekespro.scss */
   h1 {
     display: inline-block; }
 
-  /* line 377, kekespro.scss */
-  .list .productresult {
+  /* line 376, kekespro.scss */
+  .results .productresult {
     width: 33%; }
 
-  /* line 380, kekespro.scss */
+  /* line 379, kekespro.scss */
   .leftColumn {
     margin-right: 19.5em; }
 
-  /* line 383, kekespro.scss */
+  /* line 382, kekespro.scss */
   .rightColumn {
     width: 20em;
     padding-left: 1.5em; }
 
-  /* line 387, kekespro.scss */
+  /* line 386, kekespro.scss */
   .rightColumn {
     background: #eee9e5; }
 
-  /* line 390, kekespro.scss */
+  /* line 389, kekespro.scss */
   input {
     width: 230px; } }
 @media all and (min-width: 60em) {
-  /* line 395, kekespro.scss */
+  /* line 394, kekespro.scss */
+  #results .productresult {
+    width: 33%; } }
+@media all and (min-width: 70em) {
+  /* line 399, kekespro.scss */
   #results .productresult {
     width: 25%; } }
-@media all and (min-width: 70em) {
-  /* line 400, kekespro.scss */
+@media all and (min-width: 90em) {
+  /* line 404, kekespro.scss */
   #results .productresult {
     width: 20%; } }
-@media all and (min-width: 90em) {
-  /* line 405, kekespro.scss */
+@media all and (min-width: 100em) {
+  /* line 409, kekespro.scss */
   #results .productresult {
     width: 16.66%; } }
-@media all and (min-width: 100em) {
-  /* line 410, kekespro.scss */
+@media all and (min-width: 120em) {
+  /* line 414, kekespro.scss */
   #results .productresult {
-    width: 12.5%; }
-
-  /* line 413, kekespro.scss */
-  .leftColumn {
-    margin-right: 22.75em; }
-
-  /* line 416, kekespro.scss */
-  .rightColumn {
-    width: 22em; } }
+    width: 12.5%; } }
 
 /*# sourceMappingURL=kekespro.css.map */

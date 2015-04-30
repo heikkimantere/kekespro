@@ -21,12 +21,14 @@ $(window).load(function() {
   updateBasketHtml()
   $("input[id='search']").focus()
 
+  listAllProducts()
+
   function addItemsFromUrl() {
-    var kplArray = getQueryVariable('kpl')
-    var eanArray = getQueryVariable('ean')
-    var client = getQueryVariable('client')
-    var name = getQueryVariable('name')
-    var address = getQueryVariable('address')
+    var kplArray = getURLVariable('kpl')
+    var eanArray = getURLVariable('ean')
+    var client = getURLVariable('client')
+    var name = getURLVariable('name')
+    var address = getURLVariable('address')
 
     $.getJSON('products.json', function (data) {
       for (var i in eanArray) {
@@ -41,7 +43,7 @@ $(window).load(function() {
     $('#address').val(decodeURIComponent(address))
   }
 
-  function getQueryVariable(variable) {
+  function getURLVariable(variable) {
     var query = window.location.search.substring(1)
     var vars = query.split("&")
     var retval = []
@@ -53,7 +55,6 @@ $(window).load(function() {
     return retval
   }
 
-
   $('#search').keyup(function() {
     var searchTerm = $('#search').val()
     var opacity = searchTerm.length ? 1 : 0
@@ -63,46 +64,77 @@ $(window).load(function() {
     })
   })
 
-  $('#search').trigger('keyup')
+  function listAllProducts() {
+    var productList = $('#results')
+    var productItem = $('#productResultTemplate')
+    $.getJSON('products.json', function (data) {
+      $.each(data, function (key, val) {
+        productItem.find('.productresult')
+          .prop('id', val.ean)
+        productItem.find('.ean')
+          .prop('value', val.ean)
+        productItem.find('.nimike')
+          .html(val.nimike)
+          .attr('data-value', val.nimike)
+        productItem.find('.kuvaus')
+          .attr('data-value', val.kuvaus)
+          .html(val.kuvaus)
+        productItem.find('.hinta')
+          .html(val.hinta)
+        productItem.find('img')
+          .prop('src', "./img/" + val.ean + ".jpg")
+          .prop('alt', val.nimike)
+        productList.append(productItem.html())
+      })
+    })
+    addKeke()
+    $('#keke').hide()
+  }
+
+  function addKeke() {
+    var productList = $('#results')
+    var productItem = $('#productResultTemplate')
+    productItem.find('.productresult')
+      .prop('id', 'keke')
+    productItem.find('.nimike')
+      .html("HA HA HA EI LÖYTYNYT!")
+    productItem.find('img')
+      .prop('src', "./img/suurkeke.png")
+    productList.append(productItem.html())
+  }
 
   function listSearchResults(searchTerm, data) {
-    var regex = new RegExp(searchTerm, "i")
+    var searchTermRegex = new RegExp(searchTerm, "i")
     var productCount = 0
-    var result = $('#productResultTemplate')
-    var resultsList =  $('#results .list')
-    resultsList.html('')
+    var resultsList =  $('#results')
+    var resultItem = resultsList.find('.productresult')
+    resultItem.hide()
+    $('#keke').hide()
     $.each(data, function(key, val) {
-      if ((val.nimike.search(regex) != -1) || (val.kuvaus.search(regex) != -1) || (val.hakusanat.search(regex) != -1)) {
-        hiliteterm = searchTerm.replace(/(\s+)/, "(<[^>]+>)*$1(<[^>]+>)*")
-        var pattern = new RegExp("(" + hiliteterm + ")", "gi")
-        result.find('.productresult')
-          .prop('id', val.ean)
-        result.find('.ean')
-          .prop('value',  val.ean)
-        result.find('.nimike')
-          .html(val.nimike.replace(pattern, "<mark>$1</mark>"))
-          .attr('data-value', val.nimike)
-        result.find('.kuvaus')
-          .attr('data-value', val.kuvaus)
-          .html(val.kuvaus.replace(pattern, "<mark>$1</mark>"))
-        result.find('.hinta')
-          .html(val.hinta)
-        result.find('img')
-          .prop('src', "./img/"+val.ean+".jpg")
-          .prop('alt', val.nimike)
-        resultsList.append(result.html())
+      if ((val.nimike.search(searchTermRegex) != -1) || (val.kuvaus.search(searchTermRegex) != -1) || (val.hakusanat.search(searchTermRegex) != -1)) {
+        var match = val.nimike.match(searchTermRegex)
+        var selector = '#'+val.ean
+        var item = $('.productresult'+selector)
+        if (resultItem.is(selector))
+          item.show()
+        item.find('.nimike')
+          .html(val.nimike.replace(searchTermRegex, "<mark>"+match+"</mark>"))
+        item.find('.kuvaus')
+          .html(val.kuvaus.replace(searchTermRegex, "<mark>"+match+"</mark>"))
         productCount++
       }
     })
     if (productCount === 0) {
-      result.find('img').prop('src', "./img/suurkeke.png").prop('alt', "keke")
-      result.find('.kuvaus, .ean').remove()
+      $('#keke').show()
       if (searchTerm.indexOf("kalja") >= 0 || searchTerm.indexOf("olut") >= 0 )
-        result.find('.nimike').html('JUOPPO!').prop('data-value', 'keke')
+        $('#keke .nimike').html('JUOPPO!')
       else
-        result.find('.nimike').html('HAHAHA EI LÖYTYNYT!').prop('data-value', 'keke')
-      resultsList.append(result.html())
+        $('#keke .nimike').html('HAHAHA EI LÖYTYNYT!')
     }
+  }
+
+  function showOnlyBasketContents() {
+    return $('#showOnlyBasketContents').is(':checked')
   }
 
   $('.icon_clear').click(function() {
@@ -111,7 +143,7 @@ $(window).load(function() {
     $('#search').focus().trigger('keyup')
   })
 
-  $('#results').on('click', '.productresult', function(e) {
+  $('#results').on('click', '.productresult', function() {
     var ean = $(this).attr("id")
     $(this).fadeIn(50).fadeOut(50).fadeIn(200)
     addToBasket(ean)
@@ -169,7 +201,7 @@ $(window).load(function() {
   }
 
   function markBasketItems() {
-    var productList = $('#results .list')
+    var productList = $('#results')
     var products = productList.find('.productresult')
 
     for(j in basket.items) {
@@ -194,7 +226,7 @@ $(window).load(function() {
   })
 
   function unmarkItem(ean) {
-    var productList = $('#results .list')
+    var productList = $('#results')
     var products = productList.find('.productresult')
     for (i = 0; i < products.length; i++) {
       var product = productList.find('.productresult:eq(' + i + ')')
@@ -277,8 +309,6 @@ $(window).load(function() {
     var currentUrl = window.location.href.split('?')[0]
     newUrlEnd = newUrlEnd.split(/&(.+)?/)[1] // take out first '&'
     var newUrl = currentUrl + "?" + newUrlEnd
-
-    console.log(newUrlEnd)
 
     $('.urlToBasket').toggle(basket.items.length > 0)
     $('.emptyBasket').toggle(basket.items.length > 0)

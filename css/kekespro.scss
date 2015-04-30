@@ -237,7 +237,6 @@ input[type="button"] {
     }
     .li-head {
       margin: 0px 0px 10px 0px;
-      text-transform: capitalize;
       font-weight: 400;
       min-height: 2.4em;
     }
@@ -339,7 +338,7 @@ input[type="button"] {
     background: $bg;
     padding-left: 1em;
   }	
-  .list {
+  #results {
     display: flex;
     width: 100%;
     flex-wrap: wrap;
@@ -347,7 +346,7 @@ input[type="button"] {
     margin: 0 auto;
     overflow: hidden;
     .productresult {
-      padding: 0.5em;
+      padding: 1em;
       display: block;
       width: 50%;
       float: left;
@@ -374,7 +373,7 @@ input[type="button"] {
   h1 {
     display: inline-block;	
   }
-  .list .productresult {
+  .results .productresult {
     width: 33%;
   }
   .leftColumn { 
@@ -393,28 +392,27 @@ input[type="button"] {
 }
 @media all and (min-width: 60em) {
   #results .productresult {
-    width: 25%;
+    width: 33%;
   }
 }
 @media all and (min-width: 70em) {
   #results .productresult {
-    width: 20%;
+    width: 25%;
   }
 }
 @media all and (min-width: 90em) {
   #results .productresult {
-    width: 16.66%;
+    width: 20%;
   }
 }
 @media all and (min-width: 100em) {
   #results .productresult {
+    width: 16.66%;
+  }
+}
+@media all and (min-width: 120em) {
+  #results .productresult {
     width: 12.5%;
-  }
-  .leftColumn { 
-    margin-right: 22.75em; 
-  }
-  .rightColumn { 
-    width: 22em; 
   }
 }
 
