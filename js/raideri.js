@@ -6,24 +6,23 @@ var catalogue = {
   items: []
 }
 
-$(document).keyup(function(e) {
-  var esc = 27
-  if (e.keyCode == esc) {
-    console.log("esc")
-    $('#search')
-      .trigger('keyup')
-      .focus()
-      .val('')
-      .next('.icon_clear').fadeTo(200, 0)
-    return false
-  }
-})
-
 $(window).load(function() {
   createCatalogue()
-  validateInputFields()
   updateBasketHtml()
   $("input[id='search']").focus()
+
+  $(document).keyup(function(e) {
+    var esc = 27
+    if (e.keyCode == esc) {
+      $('#search')
+        .trigger('keyup')
+        .focus()
+        .val('')
+        .next('.icon_clear').fadeTo(100, 0)
+      listSearchResults()
+      return false
+    }
+  })
 
   function createCatalogue() {
     $.getJSON('products.json', function (data) {
@@ -40,6 +39,7 @@ $(window).load(function() {
       })
       listAllProducts()
       addItemsFromUrl()
+      validateInputFields()
     })
   }
 
@@ -114,14 +114,15 @@ $(window).load(function() {
 
 
   $('#search').keyup(function() {
+    $('#showOnlyBasketContents').prop('checked', false)
     var searchTerm = $('#search').val()
     var opacity = searchTerm.length ? 1 : 0
-    $('.icon_clear').stop().fadeTo(200, opacity)
+    $('.icon_clear').stop().fadeTo(100, opacity)
     listSearchResults(searchTerm)
   })
 
   function listSearchResults(searchTerm) {
-    $('#search').val('')
+    $('#search').val(searchTerm)
     var searchTermRegex = new RegExp(searchTerm, "i")
     var productCount = 0
     var product = $('.productresult')
@@ -129,9 +130,10 @@ $(window).load(function() {
 
     for (i in catalogue.items) {
       var item = catalogue.items[i]
+      var selector = '#' + item.ean
+      var foundItem = $('.productresult' + selector)
+
       if (item.nimike.search(searchTermRegex) != -1 || (item.kuvaus.search(searchTermRegex) != -1) || (item.hakusanat.search(searchTermRegex) != -1)) {
-        var selector = '#' + item.ean
-        var foundItem = $('.productresult' + selector)
         var match = item.nimike.match(searchTermRegex) // TAI KUVAUS TAI HAKUSANAT!!!
 
         if (showOnlyBasketContents()) {
@@ -157,12 +159,19 @@ $(window).load(function() {
   }
 
   function showOnlyBasketContents() {
-    return $('#showOnlyBasketContents').hasClass('active')
+    return $('#showOnlyBasketContents').is(':checked')
+  }
+
+  function toggleShowOnlyBasketContents(value) {
+    if (value == false)
+      $('#showOnlyBasketContents').prop('checked', false)
+    else
+      $('#showOnlyBasketContents').prop('checked', true)
+    listSearchResults()
   }
 
   $('#showOnlyBasketContents').click(function() {
-    $(this).toggleClass('active')
-    listSearchResults('')
+    listSearchResults()
   })
 
   $('.icon_clear').click(function() {
@@ -172,14 +181,28 @@ $(window).load(function() {
   })
 
   function hideClearIcon() {
-    $('.icon_clear').delay(100).fadeTo(300, 0)
+    $('.icon_clear').delay(100).fadeTo(100, 0)
   }
 
   $('#results').on('click', '.productresult', function() {
     var ean = $(this).attr("id")
-    $(this).fadeIn(50).fadeOut(50).fadeIn(200)
+    flash($(this))
     addToBasket(ean)
   })
+  $('#results').on('click', '.productresult .minus', function(e) {
+    var item = $(this).parent().parent()
+    var ean = item.attr("id")
+    e.stopPropagation()
+    if (item.find('.amount').text() > 0) {
+      flash(item)
+      removeFromBasket(ean)
+    }
+  })
+
+  function flash(item) {
+    item.stop(true, true).fadeTo(10, 1).fadeTo(15, .5).fadeTo(250, 1)
+  }
+
 
   $('.rightColumn input[type=text], .rightColumn textarea').each(function() {
     $(this).keyup(function() {
@@ -210,16 +233,6 @@ $(window).load(function() {
       var item = catalogue.items[i]
       if (item.ean == eanToAdd) {
         item.inBasket++
-        var increased = false
-        for (j in basket.items) {
-          var basketItem = basket.items[j]
-          if (basketItem.ean == eanToAdd) {
-            basketItem.inBasket = item.inBasket
-            increased = true
-          }
-        }
-        if (!increased)
-          basket.items.push(item)
         updateBasketHtml()
         break
       }
@@ -230,16 +243,16 @@ $(window).load(function() {
     var productList = $('#results')
     var products = productList.find('.productresult')
 
-    for(j in basket.items) {
-      var basketItem = basket.items[j]
+    var basketItems = returnBasketItems()
+    for (i in basketItems) {
+      var basketItem = basketItems[i]
       var basketItemEan = basketItem.ean
-
-      for (i=0; i < products.length; i++) {
-        var item = products[i]
+      for (j=0; j < products.length; j++) {
+        var item = products[j]
         var ean = item.id
         if (ean == basketItemEan) {
           item.classList.add('inBasket')
-          item.querySelector('.selected').innerHTML = basketItem.inBasket
+          item.querySelector('.amount').innerHTML = basketItem.inBasket
           break
         }
       }
@@ -259,22 +272,21 @@ $(window).load(function() {
       var ean = item.id
       if (basketEan == ean) {
         item.classList.remove('inBasket')
-        item.querySelector('.selected').innerHTML = ''
+        item.querySelector('.amount').innerHTML = ''
         break
       }
     }
   }
 
   function removeFromBasket(ean) {
-    for (var i = 0; i < basket.items.length; i++) {
-      if (basket.items[i].ean == ean) {
-        if (basket.items[i].inBasket == 1) {
-          basket.items.splice(i, 1)
-          unmarkItem(ean)
-        } else {
-          basket.items[i].inBasket--
-          reduced = true
-        }
+    var basketItems = returnBasketItems()
+    for (i in basketItems) {
+      var basketItem = basketItems[i]
+      if (basketItem.ean == ean)
+        basketItem.inBasket--
+      if (basketItem.inBasket == 0) {
+        unmarkItem(ean)
+        listSearchResults()
       }
     }
     $('.urlToBasket').toggle(basket.items.length > 0)
@@ -282,59 +294,76 @@ $(window).load(function() {
   }
 
   function emptyBasket() {
-    var basketSize = basket.items.length
-    basket.items.splice(0, basketSize)
+    var basketItems = returnBasketItems()
+    for (i in basketItems)
+      basketItems[i].inBasket = 0
     $('.productresult').removeClass('inBasket')
+    toggleShowOnlyBasketContents(false)
     updateBasketHtml()
+  }
+
+  function returnBasketItems() {
+    var basketItems = []
+    for (i in catalogue.items) {
+      var item = catalogue.items[i]
+      if (item.inBasket > 0)
+        basketItems.push(item)
+    }
+    return basketItems
   }
 
   function countTotalPrice() {
     var totalPrice = 0
-    for (i in basket.items) {
-      var item = basket.items[i]
+    var basketItems = returnBasketItems()
+    for (i in basketItems) {
+      var item = basketItems[i]
       if (item.hinta != '')
         var price = item.hinta
       else price = '0'
       var numberPrice = parseFloat(price.replace(',','.'))
-      var amount = basket.items[i].inBasket
+      var amount = basketItems[i].inBasket
       totalPrice += parseFloat(numberPrice * amount)
     }
-    var niceNumber = totalPrice.toFixed(2).replace('.',',').concat(' €')
-    return niceNumber
+    return niceNumber = totalPrice.toFixed(2).replace('.',',').concat(' €')
   }
 
   function updateBasketHtml() {
-    var basketContents = $('#basketcontents')
-    basketContents.html('')
+    var basketHTML = $('#basketcontents')
+    basketHTML.html('')
     var htmlItem = $('#basketItemTemplate')
-    for (i in basket.items) {
-      var item = basket.items[i]
-      htmlItem.find('.reduce').attr('data-ean-remove', item.ean)
-      if (item.hinta == '')
+    var basketItems = returnBasketItems()
+    for (i in basketItems) {
+      var basketItem = basketItems[i]
+      htmlItem.find('.reduce').attr('data-ean-remove', basketItem.ean)
+      if (basketItem.hinta == '')
         tidyPrice = '?'
       else {
-        var parsedPrice = parseFloat(item.hinta.replace(',', '.'))
-        var itemTotal = item.inBasket * parsedPrice
+        var parsedPrice = parseFloat(basketItem.hinta.replace(',', '.'))
+        var itemTotal = basketItem.inBasket * parsedPrice
         var tidyPrice = itemTotal.toFixed(2).replace('.', ',').concat(' €')
       }
-      htmlItem.find('.amount').html(item.inBasket + " kpl")
+      htmlItem.find('.amount').html(basketItem.inBasket + " kpl")
       htmlItem.find('.itemTotalPrice').html("= " + tidyPrice)
-      htmlItem.find('.productName').html(item.nimike)
-      htmlItem.find('.description').html(item.kuvaus)
-      basketContents.append(htmlItem.html())
+      htmlItem.find('.productName').html(basketItem.nimike)
+      htmlItem.find('.description').html(basketItem.kuvaus)
+      basketHTML.append(htmlItem.html())
     }
-    basketContents.append("<p class='totalPrice'>Yhteensä: "+ countTotalPrice() +"</p>")
+    basketHTML.append("<p class='totalPrice'>Yhteensä: "+ countTotalPrice() +"</p>")
     if ($('#basketcontents .itemRow').length == 0)
-      basketContents.html('Ostoskori on tyhjä')
+      basketHTML.html('Ostoskori on tyhjä')
     createUrlToBasket()
     markBasketItems()
+    returnBasketItems()
   }
 
   function createUrlToBasket() {
     var newUrlEnd = ''
-    for (i=0; i<basket.items.length; i++) {
-      var kpl = basket.items[i].inBasket
-      var ean = basket.items[i].ean
+    var basketItems = returnBasketItems()
+
+    for (i in basketItems) {
+      var item = basketItems[i]
+      var kpl = item.inBasket
+      var ean = item.ean
       newUrlEnd += "&kpl="+kpl+"&ean="+ean
     }
     var name = encodeURIComponent($('#name').val())
@@ -346,8 +375,8 @@ $(window).load(function() {
     newUrlEnd = newUrlEnd.split(/&(.+)?/)[1] // take out first '&'
     var newUrl = currentUrl + "?" + newUrlEnd
 
-    $('.urlToBasket').toggle(basket.items.length > 0)
-    $('.emptyBasket').toggle(basket.items.length > 0)
+    $('.urlToBasket').toggle(basketItems.length > 0)
+    $('.emptyBasket').toggle(basketItems.length > 0)
     $('.urlToBasket').html("<a href="+newUrl+">Linkki koriin</a>")
   }
 
@@ -366,16 +395,15 @@ $(window).load(function() {
       basketitems += basket.items[i].inBasket + ' kpl ' + basket.items[i].nimike + ' ' +  basket.items[i].kuvaus + ' (' + basket.items[i].ean + ')\n'
     }
 
-    if (basketitems.length > 1200){
+    if (basketitems.length > 1200) {
       $("#ex1").html("<p>Ostoslista on liian pitkä, kopioi se alta ja liitä viestiin.</p><br/><br/><p class=\"modal\">" + basketitems.replace(/(?:\r\n|\r|\n)/g, '<br />') + '</p><br/><br/><a href="mailto:' + email + '?cc=' + cc + '&subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body) + '" >Avaa sähköposti tästä</a><br/><br/><a rel="modal:close">Sulje</a>')
       $("#ex1").modal({
         fadeDuration: 200,
         showClose: false
       })
     }
-    else{
+    else
       window.location = 'mailto:' + email + '?cc=' + cc + '&subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body + basketitems)
-    }
   })
 
 })

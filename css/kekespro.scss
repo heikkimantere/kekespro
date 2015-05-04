@@ -225,16 +225,22 @@ input[type="button"] {
   position: relative; 
   margin: 7em .5em .5em .5em; 
 }
-.leftColumn, .rightColumn {  
-  padding: .25em; 
-}
 .leftColumn { 
-  margin-bottom: .5em; 
+  margin-bottom: .5em;
+  padding: .25em; 
 }
 .rightColumn {
   background: $lightGrey;
   clear: both;
   z-index: 10;
+  padding: 0 .75em;
+  position: fixed;
+  width: 150px;
+  overflow-y: scroll;
+  top: 0;
+  bottom: 0;
+  right: 0; 
+  width: 17em; 
 }
 #results {
   padding: 0;
@@ -245,11 +251,15 @@ input[type="button"] {
     position: relative;
     cursor: pointer;
     min-height: 18em;
-    .selected {
+    padding: 1em;
+    display: block;
+    background: none;
+    border: 0;
+    .amount {
       display: none;
     }
     &.inBasket {
-      .selected {
+      .amount {
         display: block;
         position: absolute;
         top: 30px;
@@ -272,21 +282,43 @@ input[type="button"] {
         border-radius: 5px;
         width: calc(100% + 4px);
         height: calc(100% + 4px);
-        background: #f9f9f9;
-        opacity: .25;
+        background: rgba(250, 250, 250, .2);
         display: block;
         position: absolute;
         top: -2px;
         left: -2px;
-        .plus {
+        .plus, .minus {
           position: absolute;
+          line-height: 1em;
           top: 45%;
-          left: 50%;
           transform: translate(-50%, -50%);         
           font-size: 7em;
           font-weight: 600;
           color: black;
+          opacity: .8;
           text-align: center;
+
+          -webkit-touch-callout: none;
+          -webkit-user-select: none;
+          -khtml-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+        .plus {
+          opacity: .8;
+          left: 50%;
+        }
+        .minus {
+          opacity: .2;
+          right: 0%;
+          font-size: 5em;
+          &:hover:not(.disabled) {
+            opacity: .8;
+            &~ .plus {
+              opacity: .2;
+            }
+          }
         } 
       }
     }
@@ -295,6 +327,11 @@ input[type="button"] {
       font-weight: 600;
       margin-top: 7px;
       min-height: 1.2em;
+    }
+    .li-img, .li-text {
+      display: block;
+      width: auto;
+      padding: 0;
     }
     .li-img {
       vertical-align: middle;
@@ -312,7 +349,6 @@ input[type="button"] {
     .li-head {
       margin: 0px 0px 10px 0px;
       font-weight: 400;
-      min-height: 2.4em;
     }
     .li-sub {
       margin: 0;
@@ -390,8 +426,6 @@ input[type="button"] {
   display: none;
 }
 
-
-
 @media all and (min-width: 35em) {
   body {
     color: $text;
@@ -403,16 +437,6 @@ input[type="button"] {
   header, .leftColumn { 
     margin-right: 16em; 
   }
-  .rightColumn { 
-    position: fixed;
-    width: 150px;
-    overflow-y: scroll;
-    top: 0;
-    bottom: 0;
-    right: 0; 
-    width: 17em; 
-    padding-left: 1em;
-  }	
   #results {
     display: flex;
     width: 100%;
@@ -420,22 +444,6 @@ input[type="button"] {
     padding: 0.5em;
     margin: 0 auto;
     overflow: hidden;
-    .productresult {
-      padding: 1em;
-      display: block;
-      width: 50%;
-      float: left;
-      background: none;
-      border: 0;
-      .li-head {
-        min-height: initial;
-      }
-      .li-img, .li-text {
-        display: block;
-        width: auto;
-        padding: 0;
-      }
-    }
   }
   #ostoskoripainike {
     display: none;
@@ -481,7 +489,8 @@ input[type="button"] {
 }
 @media all and (min-width: 120em) {
   #results .productresult {
-    width: 12.5%;
+    width: 14.25%;
+    padding: 1em;
   }
 }
 
