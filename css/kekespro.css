@@ -224,41 +224,42 @@ input[type="button"] {
   font-size: 1em;
   background-color: #C4E8FF;
   border: 1px solid #8CC2E5;
-  color: #444; }
-  /* line 212, kekespro.scss */
+  color: #444;
+  width: 230px; }
+  /* line 213, kekespro.scss */
   input[type="button"]:hover:not(:disabled) {
     color: #000;
     background-color: #AFE0FF; }
-  /* line 216, kekespro.scss */
+  /* line 217, kekespro.scss */
   input[type="button"]:disabled {
     cursor: default;
     color: #ccc;
     border: 1px solid #ccc;
     background: #eee; }
 
-/* line 223, kekespro.scss */
+/* line 224, kekespro.scss */
 .columnsContainer {
   position: relative;
   margin: 7em .5em .5em .5em; }
 
-/* line 227, kekespro.scss */
+/* line 228, kekespro.scss */
 .leftColumn, .rightColumn {
   padding: .25em; }
 
-/* line 230, kekespro.scss */
+/* line 231, kekespro.scss */
 .leftColumn {
   margin-bottom: .5em; }
 
-/* line 233, kekespro.scss */
+/* line 234, kekespro.scss */
 .rightColumn {
   background: #e7e7e7;
   clear: both;
   z-index: 10; }
 
-/* line 238, kekespro.scss */
+/* line 239, kekespro.scss */
 #results {
   padding: 0; }
-  /* line 240, kekespro.scss */
+  /* line 241, kekespro.scss */
   #results .productresult {
     border-collapse: collapse;
     width: 50%;
@@ -266,10 +267,10 @@ input[type="button"] {
     position: relative;
     cursor: pointer;
     min-height: 18em; }
-    /* line 247, kekespro.scss */
+    /* line 248, kekespro.scss */
     #results .productresult .selected {
       display: none; }
-    /* line 251, kekespro.scss */
+    /* line 252, kekespro.scss */
     #results .productresult.inBasket .selected {
       display: block;
       position: absolute;
@@ -282,10 +283,10 @@ input[type="button"] {
       font-weight: 600;
       text-align: center;
       padding: 3px 10px; }
-    /* line 265, kekespro.scss */
+    /* line 266, kekespro.scss */
     #results .productresult .overlay {
       display: none; }
-    /* line 269, kekespro.scss */
+    /* line 270, kekespro.scss */
     #results .productresult:hover .overlay {
       border: 4px solid #bbb;
       border-radius: 5px;
@@ -297,7 +298,7 @@ input[type="button"] {
       position: absolute;
       top: -2px;
       left: -2px; }
-      /* line 280, kekespro.scss */
+      /* line 281, kekespro.scss */
       #results .productresult:hover .overlay .plus {
         position: absolute;
         top: 45%;
@@ -307,34 +308,34 @@ input[type="button"] {
         font-weight: 600;
         color: black;
         text-align: center; }
-    /* line 293, kekespro.scss */
+    /* line 294, kekespro.scss */
     #results .productresult .hinta {
       font-weight: 600;
       margin-top: 7px;
       min-height: 1.2em; }
-    /* line 298, kekespro.scss */
+    /* line 299, kekespro.scss */
     #results .productresult .li-img {
       vertical-align: middle; }
-      /* line 300, kekespro.scss */
+      /* line 301, kekespro.scss */
       #results .productresult .li-img img {
         display: block;
         width: 100%;
         height: auto;
         padding: 20px; }
-    /* line 307, kekespro.scss */
+    /* line 308, kekespro.scss */
     #results .productresult .li-text {
       vertical-align: middle;
       min-height: 6em; }
-    /* line 311, kekespro.scss */
+    /* line 312, kekespro.scss */
     #results .productresult .li-head {
       margin: 0px 0px 10px 0px;
       font-weight: 400;
       min-height: 2.4em; }
-    /* line 316, kekespro.scss */
+    /* line 317, kekespro.scss */
     #results .productresult .li-sub {
       margin: 0; }
 
-/* line 322, kekespro.scss */
+/* line 323, kekespro.scss */
 #ostoskoripainike {
   display: block;
   position: fixed;
@@ -345,51 +346,53 @@ input[type="button"] {
   background-color: white;
   text-transform: uppercase; }
 
-/* line 332, kekespro.scss */
+/* line 333, kekespro.scss */
 .urlToBasket {
   float: left;
   margin: 10px 0; }
 
-/* line 336, kekespro.scss */
+/* line 337, kekespro.scss */
 .emptyBasket {
   float: right;
   margin: 10px;
   display: none; }
 
-/* line 341, kekespro.scss */
+/* line 342, kekespro.scss */
 #basketcontents {
   clear: both;
   line-height: 1.35em;
   font-weight: 300; }
-  /* line 345, kekespro.scss */
+  /* line 346, kekespro.scss */
   #basketcontents b {
     display: block; }
-  /* line 348, kekespro.scss */
+  /* line 349, kekespro.scss */
   #basketcontents .itemRow {
-    padding: 5px 0; }
-    /* line 350, kekespro.scss */
+    padding: 7px 0; }
+    /* line 351, kekespro.scss */
     #basketcontents .itemRow .reduce {
       cursor: pointer;
       float: right;
       padding: 4px 7px;
       margin-right: 3px;
       border-radius: 15px; }
-      /* line 356, kekespro.scss */
+      /* line 357, kekespro.scss */
       #basketcontents .itemRow .reduce:hover {
         background: #ccc; }
-    /* line 360, kekespro.scss */
+    /* line 361, kekespro.scss */
     #basketcontents .itemRow .amount {
-      display: block;
       font-weight: 600; }
     /* line 364, kekespro.scss */
+    #basketcontents .itemRow .itemTotalPrice {
+      font-size: 14px; }
+    /* line 367, kekespro.scss */
     #basketcontents .itemRow .productName {
       display: block;
       padding: 3px 0; }
-    /* line 368, kekespro.scss */
+    /* line 371, kekespro.scss */
     #basketcontents .itemRow .description {
       display: block;
       font-size: 14px; }
-  /* line 373, kekespro.scss */
+  /* line 376, kekespro.scss */
   #basketcontents .totalPrice {
     font-weight: 600;
     margin: 10px 10px 10px 0;
@@ -397,29 +400,29 @@ input[type="button"] {
     padding: 5px 0;
     border-top: 1px solid black; }
 
-/* line 382, kekespro.scss */
+/* line 385, kekespro.scss */
 #productResultTemplate, #basketItemTemplate {
   display: none; }
 
-/* line 386, kekespro.scss */
+/* line 389, kekespro.scss */
 .h1end {
   display: none; }
 
 @media all and (min-width: 35em) {
-  /* line 393, kekespro.scss */
+  /* line 396, kekespro.scss */
   body {
     color: #444;
     font-weight: 200; }
 
-  /* line 397, kekespro.scss */
+  /* line 400, kekespro.scss */
   h1 {
     display: none; }
 
-  /* line 400, kekespro.scss */
+  /* line 403, kekespro.scss */
   header, .leftColumn {
     margin-right: 16em; }
 
-  /* line 403, kekespro.scss */
+  /* line 406, kekespro.scss */
   .rightColumn {
     position: fixed;
     width: 150px;
@@ -430,7 +433,7 @@ input[type="button"] {
     width: 17em;
     padding-left: 1em; }
 
-  /* line 413, kekespro.scss */
+  /* line 416, kekespro.scss */
   #results {
     display: flex;
     width: 100%;
@@ -438,7 +441,7 @@ input[type="button"] {
     padding: 0.5em;
     margin: 0 auto;
     overflow: hidden; }
-    /* line 420, kekespro.scss */
+    /* line 423, kekespro.scss */
     #results .productresult {
       padding: 1em;
       display: block;
@@ -446,57 +449,57 @@ input[type="button"] {
       float: left;
       background: none;
       border: 0; }
-      /* line 427, kekespro.scss */
+      /* line 430, kekespro.scss */
       #results .productresult .li-head {
         min-height: initial; }
-      /* line 430, kekespro.scss */
+      /* line 433, kekespro.scss */
       #results .productresult .li-img, #results .productresult .li-text {
         display: block;
         width: auto;
         padding: 0; }
 
-  /* line 437, kekespro.scss */
+  /* line 440, kekespro.scss */
   #ostoskoripainike {
     display: none; }
 
-  /* line 440, kekespro.scss */
+  /* line 443, kekespro.scss */
   .h1end {
     display: block; } }
 @media all and (min-width: 50em) {
-  /* line 445, kekespro.scss */
+  /* line 448, kekespro.scss */
   h1 {
     display: inline-block; }
 
-  /* line 448, kekespro.scss */
+  /* line 451, kekespro.scss */
   .results .productresult {
     width: 33%; }
 
-  /* line 451, kekespro.scss */
+  /* line 454, kekespro.scss */
   .leftColumn {
     margin-right: 19.5em; }
 
-  /* line 454, kekespro.scss */
+  /* line 457, kekespro.scss */
   .rightColumn {
     width: 20em;
     padding-left: 1.5em; } }
 @media all and (min-width: 60em) {
-  /* line 460, kekespro.scss */
+  /* line 463, kekespro.scss */
   #results .productresult {
     width: 33%; } }
 @media all and (min-width: 70em) {
-  /* line 465, kekespro.scss */
+  /* line 468, kekespro.scss */
   #results .productresult {
     width: 25%; } }
 @media all and (min-width: 90em) {
-  /* line 470, kekespro.scss */
+  /* line 473, kekespro.scss */
   #results .productresult {
     width: 20%; } }
 @media all and (min-width: 100em) {
-  /* line 475, kekespro.scss */
+  /* line 478, kekespro.scss */
   #results .productresult {
     width: 16.66%; } }
 @media all and (min-width: 120em) {
-  /* line 480, kekespro.scss */
+  /* line 483, kekespro.scss */
   #results .productresult {
     width: 12.5%; } }
 

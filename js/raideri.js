@@ -3,28 +3,45 @@ var basket = {
 }
 
 var catalogue = {
-  products: []
+  items: []
 }
 
 $(document).keyup(function(e) {
   var esc = 27
   if (e.keyCode == esc) {
+    console.log("esc")
     $('#search')
-      .val('')
-      .next('.icon_clear').fadeTo(200, 0)
       .trigger('keyup')
       .focus()
+      .val('')
+      .next('.icon_clear').fadeTo(200, 0)
     return false
   }
 })
 
 $(window).load(function() {
-  addItemsFromUrl()
+  createCatalogue()
   validateInputFields()
   updateBasketHtml()
   $("input[id='search']").focus()
 
-  listAllProducts()
+  function createCatalogue() {
+    $.getJSON('products.json', function (data) {
+      $.each(data, function (key, val) {
+        var item = {
+          nimike: val.nimike,
+          ean: val.ean,
+          kuvaus: val.kuvaus,
+          hinta: val.hinta,
+          hakusanat: val.hakusanat,
+          inBasket: 0
+        }
+        catalogue.items.push(item)
+      })
+      listAllProducts()
+      addItemsFromUrl()
+    })
+  }
 
   function addItemsFromUrl() {
     var kplArray = getURLVariable('kpl')
@@ -33,14 +50,13 @@ $(window).load(function() {
     var name = getURLVariable('name')
     var address = getURLVariable('address')
 
-    $.getJSON('products.json', function (data) {
-      for (var i in eanArray) {
-        var kpl = kplArray[i]
-        ean = eanArray[i]
-        for (j = 0; j < kpl; j++)
-          addToBasket(ean)
-      }
-    })
+    for (var i in eanArray) {
+      var kpl = kplArray[i]
+      var ean = eanArray[i]
+      for (i = 0; i < kpl; i++)
+        addToBasket(ean)
+    }
+
     $('#name').val(decodeURIComponent(name))
     $('#client').val(decodeURIComponent(client))
     $('#address').val(decodeURIComponent(address))
@@ -61,26 +77,25 @@ $(window).load(function() {
   function listAllProducts() {
     var productList = $('#results')
     var productItem = $('#productResultTemplate')
-    $.getJSON('products.json', function (data) {
-      $.each(data, function (key, val) {
-        productItem.find('.productresult')
-          .prop('id', val.ean)
-        productItem.find('.ean')
-          .prop('value', val.ean)
-        productItem.find('.nimike')
-          .html(val.nimike)
-          .attr('data-value', val.nimike)
-        productItem.find('.kuvaus')
-          .attr('data-value', val.kuvaus)
-          .html(val.kuvaus)
-        productItem.find('.hinta')
-          .html(val.hinta)
-        productItem.find('img')
-          .prop('src', "./img/" + val.ean + ".jpg")
-          .prop('alt', val.nimike)
-        productList.append(productItem.html())
-      })
-    })
+    for (i in catalogue.items) {
+      item = catalogue.items[i]
+      productItem.find('.productresult')
+        .prop('id', item.ean)
+      productItem.find('.ean')
+        .prop('value', item.ean)
+      productItem.find('.nimike')
+        .html(item.nimike)
+        .attr('data-value', item.nimike)
+      productItem.find('.kuvaus')
+        .attr('data-value', item.kuvaus)
+        .html(item.kuvaus)
+      productItem.find('.hinta')
+        .html(item.hinta)
+      productItem.find('img')
+        .prop('src', "./img/" + item.ean + ".jpg")
+        .prop('alt', item.nimike)
+      productList.append(productItem.html())
+    }
     addKeke()
     $('#keke').hide()
   }
@@ -102,33 +117,36 @@ $(window).load(function() {
     var searchTerm = $('#search').val()
     var opacity = searchTerm.length ? 1 : 0
     $('.icon_clear').stop().fadeTo(200, opacity)
-    $.getJSON('products.json', function(data) {
-      listSearchResults(searchTerm, data)
-    })
+    listSearchResults(searchTerm)
   })
 
-  function listSearchResults(searchTerm, data) {
+  function listSearchResults(searchTerm) {
+    $('#search').val('')
     var searchTermRegex = new RegExp(searchTerm, "i")
     var productCount = 0
     var product = $('.productresult')
     product.hide()
-    $.each(data, function(key, val) {
-      if ((val.nimike.search(searchTermRegex) != -1) || (val.kuvaus.search(searchTermRegex) != -1) || (val.hakusanat.search(searchTermRegex) != -1)) {
-        var match = val.nimike.match(searchTermRegex)
-        var selector = '#'+val.ean
-        var foundItem = $('.productresult'+selector)
+
+    for (i in catalogue.items) {
+      var item = catalogue.items[i]
+      if (item.nimike.search(searchTermRegex) != -1 || (item.kuvaus.search(searchTermRegex) != -1) || (item.hakusanat.search(searchTermRegex) != -1)) {
+        var selector = '#' + item.ean
+        var foundItem = $('.productresult' + selector)
+        var match = item.nimike.match(searchTermRegex) // TAI KUVAUS TAI HAKUSANAT!!!
+
         if (showOnlyBasketContents()) {
           if (foundItem.hasClass('inBasket'))
             foundItem.show()
         } else
           foundItem.show()
+
         foundItem.find('.nimike')
-          .html(val.nimike.replace(searchTermRegex, "<mark>"+match+"</mark>"))
+          .html(item.nimike.replace(searchTermRegex, "<mark>" + match + "</mark>"))
         foundItem.find('.kuvaus')
-          .html(val.kuvaus.replace(searchTermRegex, "<mark>"+match+"</mark>"))
+          .html(item.kuvaus.replace(searchTermRegex, "<mark>" + match + "</mark>"))
         productCount++
       }
-    })
+    }
     if (productCount === 0) {
       $('#keke').show()
       if (searchTerm.indexOf("kalja") >= 0 || searchTerm.indexOf("olut") >= 0 )
@@ -144,18 +162,18 @@ $(window).load(function() {
 
   $('#showOnlyBasketContents').click(function() {
     $(this).toggleClass('active')
-    $('#search')
-      .val('')
-      .trigger('keyup')
+    listSearchResults('')
   })
 
   $('.icon_clear').click(function() {
-    $(this).delay(300).fadeTo(300, 0)
-      .prev('input').val('')
-    $('#search')
-      .focus()
-      .trigger('keyup')
+    hideClearIcon()
+    $('#search').focus()
+    listSearchResults()
   })
+
+  function hideClearIcon() {
+    $('.icon_clear').delay(100).fadeTo(300, 0)
+  }
 
   $('#results').on('click', '.productresult', function() {
     var ean = $(this).attr("id")
@@ -188,30 +206,24 @@ $(window).load(function() {
   }
 
   function addToBasket(eanToAdd) {
-    $.getJSON('products.json', function (data) {
-      $.each(data, function (key, val) {
-        if (val.ean.search(eanToAdd) != -1) {
-          var item = {
-            nimike: val.nimike,
-            ean: val.ean,
-            kuvaus: val.kuvaus,
-            kpl: 1,
-            hinta: val.hinta
-          }
-          var increased = false
-          for (var i = 0; i < basket.items.length; i++) {
-            if (basket.items[i].ean == eanToAdd) {
-              basket.items[i].kpl++
-              increased = true
-            }
-          }
-          if (!increased) {
-            basket.items.push(item)
+    for (i in catalogue.items) {
+      var item = catalogue.items[i]
+      if (item.ean == eanToAdd) {
+        item.inBasket++
+        var increased = false
+        for (j in basket.items) {
+          var basketItem = basket.items[j]
+          if (basketItem.ean == eanToAdd) {
+            basketItem.inBasket = item.inBasket
+            increased = true
           }
         }
-      })
-      updateBasketHtml()
-    })
+        if (!increased)
+          basket.items.push(item)
+        updateBasketHtml()
+        break
+      }
+    }
   }
 
   function markBasketItems() {
@@ -227,7 +239,7 @@ $(window).load(function() {
         var ean = item.id
         if (ean == basketItemEan) {
           item.classList.add('inBasket')
-          item.querySelector('.selected').innerHTML = basketItem.kpl
+          item.querySelector('.selected').innerHTML = basketItem.inBasket
           break
         }
       }
@@ -256,12 +268,11 @@ $(window).load(function() {
   function removeFromBasket(ean) {
     for (var i = 0; i < basket.items.length; i++) {
       if (basket.items[i].ean == ean) {
-        if (basket.items[i].kpl == 1) {
+        if (basket.items[i].inBasket == 1) {
           basket.items.splice(i, 1)
           unmarkItem(ean)
-          $('#search').trigger('keyup')
         } else {
-          basket.items[i].kpl--
+          basket.items[i].inBasket--
           reduced = true
         }
       }
@@ -273,6 +284,7 @@ $(window).load(function() {
   function emptyBasket() {
     var basketSize = basket.items.length
     basket.items.splice(0, basketSize)
+    $('.productresult').removeClass('inBasket')
     updateBasketHtml()
   }
 
@@ -284,7 +296,7 @@ $(window).load(function() {
         var price = item.hinta
       else price = '0'
       var numberPrice = parseFloat(price.replace(',','.'))
-      var amount = basket.items[i].kpl
+      var amount = basket.items[i].inBasket
       totalPrice += parseFloat(numberPrice * amount)
     }
     var niceNumber = totalPrice.toFixed(2).replace('.',',').concat(' €')
@@ -294,14 +306,23 @@ $(window).load(function() {
   function updateBasketHtml() {
     var basketContents = $('#basketcontents')
     basketContents.html('')
-    var item = $('#basketItemTemplate')
-    $.each(basket.items, function(index, value) {
-      item.find('.reduce').attr('data-ean-remove', value.ean)
-      item.find('.amount').html(value.kpl + ' kpl')
-      item.find('.productName').html(value.nimike)
-      item.find('.description').html(value.kuvaus)
-      basketContents.append(item.html())
-    })
+    var htmlItem = $('#basketItemTemplate')
+    for (i in basket.items) {
+      var item = basket.items[i]
+      htmlItem.find('.reduce').attr('data-ean-remove', item.ean)
+      if (item.hinta == '')
+        tidyPrice = '?'
+      else {
+        var parsedPrice = parseFloat(item.hinta.replace(',', '.'))
+        var itemTotal = item.inBasket * parsedPrice
+        var tidyPrice = itemTotal.toFixed(2).replace('.', ',').concat(' €')
+      }
+      htmlItem.find('.amount').html(item.inBasket + " kpl")
+      htmlItem.find('.itemTotalPrice').html("= " + tidyPrice)
+      htmlItem.find('.productName').html(item.nimike)
+      htmlItem.find('.description').html(item.kuvaus)
+      basketContents.append(htmlItem.html())
+    }
     basketContents.append("<p class='totalPrice'>Yhteensä: "+ countTotalPrice() +"</p>")
     if ($('#basketcontents .itemRow').length == 0)
       basketContents.html('Ostoskori on tyhjä')
@@ -312,7 +333,7 @@ $(window).load(function() {
   function createUrlToBasket() {
     var newUrlEnd = ''
     for (i=0; i<basket.items.length; i++) {
-      var kpl = basket.items[i].kpl
+      var kpl = basket.items[i].inBasket
       var ean = basket.items[i].ean
       newUrlEnd += "&kpl="+kpl+"&ean="+ean
     }
@@ -342,7 +363,7 @@ $(window).load(function() {
 
     var basketitems = ''
     for (var i = 0; i < basket.items.length; i++) {
-      basketitems += basket.items[i].kpl + ' kpl ' + basket.items[i].nimike + ' ' +  basket.items[i].kuvaus + ' (' + basket.items[i].ean + ')\n'
+      basketitems += basket.items[i].inBasket + ' kpl ' + basket.items[i].nimike + ' ' +  basket.items[i].kuvaus + ' (' + basket.items[i].ean + ')\n'
     }
 
     if (basketitems.length > 1200){
@@ -358,5 +379,3 @@ $(window).load(function() {
   })
 
 })
-
-

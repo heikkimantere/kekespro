@@ -209,6 +209,7 @@ input[type="button"] {
   background-color: #C4E8FF;
   border: 1px solid #8CC2E5;
   color: #444;
+  width: 230px;
   &:hover:not(:disabled) {
     color: #000;
     background-color: #AFE0FF;
@@ -346,7 +347,7 @@ input[type="button"] {
     display: block;
   }
   .itemRow {
-    padding: 5px 0;
+    padding: 7px 0;
     .reduce {
       cursor: pointer;
       float: right;
@@ -358,8 +359,10 @@ input[type="button"] {
       }
     }
     .amount {
-      display: block;
       font-weight: 600;
+    }
+    .itemTotalPrice {
+      font-size: 14px;
     }
     .productName {
       display: block;
