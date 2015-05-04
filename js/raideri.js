@@ -358,5 +358,3 @@ $(window).load(function() {
   })
 
 })
-
-
