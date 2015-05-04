@@ -2,13 +2,16 @@ var basket = {
   items: []
 }
 
+var catalogue = {
+  products: []
+}
+
 $(document).keyup(function(e) {
   var esc = 27
   if (e.keyCode == esc) {
     $('#search')
-      .val("")
-      .next('.icon_clear').fadeTo(300, 0)
-      .prev('input').val('')
+      .val('')
+      .next('.icon_clear').fadeTo(200, 0)
       .trigger('keyup')
       .focus()
     return false
@@ -55,15 +58,6 @@ $(window).load(function() {
     return retval
   }
 
-  $('#search').keyup(function() {
-    var searchTerm = $('#search').val()
-    var opacity = searchTerm.length ? 1 : 0
-    $('#search').next('.icon_clear').stop().fadeTo(300, opacity)
-    $.getJSON('products.json', function(data) {
-      listSearchResults(searchTerm, data)
-    })
-  })
-
   function listAllProducts() {
     var productList = $('#results')
     var productItem = $('#productResultTemplate')
@@ -103,23 +97,34 @@ $(window).load(function() {
     productList.append(productItem.html())
   }
 
+
+  $('#search').keyup(function() {
+    var searchTerm = $('#search').val()
+    var opacity = searchTerm.length ? 1 : 0
+    $('.icon_clear').stop().fadeTo(200, opacity)
+    $.getJSON('products.json', function(data) {
+      listSearchResults(searchTerm, data)
+    })
+  })
+
   function listSearchResults(searchTerm, data) {
     var searchTermRegex = new RegExp(searchTerm, "i")
     var productCount = 0
-    var resultsList =  $('#results')
-    var resultItem = resultsList.find('.productresult')
-    resultItem.hide()
-    $('#keke').hide()
+    var product = $('.productresult')
+    product.hide()
     $.each(data, function(key, val) {
       if ((val.nimike.search(searchTermRegex) != -1) || (val.kuvaus.search(searchTermRegex) != -1) || (val.hakusanat.search(searchTermRegex) != -1)) {
         var match = val.nimike.match(searchTermRegex)
         var selector = '#'+val.ean
-        var item = $('.productresult'+selector)
-        if (resultItem.is(selector))
-          item.show()
-        item.find('.nimike')
+        var foundItem = $('.productresult'+selector)
+        if (showOnlyBasketContents()) {
+          if (foundItem.hasClass('inBasket'))
+            foundItem.show()
+        } else
+          foundItem.show()
+        foundItem.find('.nimike')
           .html(val.nimike.replace(searchTermRegex, "<mark>"+match+"</mark>"))
-        item.find('.kuvaus')
+        foundItem.find('.kuvaus')
           .html(val.kuvaus.replace(searchTermRegex, "<mark>"+match+"</mark>"))
         productCount++
       }
@@ -134,13 +139,22 @@ $(window).load(function() {
   }
 
   function showOnlyBasketContents() {
-    return $('#showOnlyBasketContents').is(':checked')
+    return $('#showOnlyBasketContents').hasClass('active')
   }
+
+  $('#showOnlyBasketContents').click(function() {
+    $(this).toggleClass('active')
+    $('#search')
+      .val('')
+      .trigger('keyup')
+  })
 
   $('.icon_clear').click(function() {
     $(this).delay(300).fadeTo(300, 0)
       .prev('input').val('')
-    $('#search').focus().trigger('keyup')
+    $('#search')
+      .focus()
+      .trigger('keyup')
   })
 
   $('#results').on('click', '.productresult', function() {
@@ -210,10 +224,11 @@ $(window).load(function() {
 
       for (i=0; i < products.length; i++) {
         var item = products[i]
-        if (item.id == basketItemEan) {
+        var ean = item.id
+        if (ean == basketItemEan) {
           item.classList.add('inBasket')
-          item.querySelector(".selected").innerHTML = basketItem.kpl
-          break;
+          item.querySelector('.selected').innerHTML = basketItem.kpl
+          break
         }
       }
     }
@@ -224,15 +239,15 @@ $(window).load(function() {
     removeFromBasket(ean)
   })
 
-  function unmarkItem(ean) {
+  function unmarkItem(basketEan) {
     var productList = $('#results')
     var products = productList.find('.productresult')
     for (i = 0; i < products.length; i++) {
-      var product = productList.find('.productresult:eq(' + i + ')')
-      var productEan = product.attr('id')
-      if (ean == productEan) {
-        product.removeClass('inBasket')
-        product.find('.selected').html('')
+      var item = products[i]
+      var ean = item.id
+      if (basketEan == ean) {
+        item.classList.remove('inBasket')
+        item.querySelector('.selected').innerHTML = ''
         break
       }
     }
@@ -244,6 +259,7 @@ $(window).load(function() {
         if (basket.items[i].kpl == 1) {
           basket.items.splice(i, 1)
           unmarkItem(ean)
+          $('#search').trigger('keyup')
         } else {
           basket.items[i].kpl--
           reduced = true
